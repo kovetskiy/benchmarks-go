@@ -246,12 +246,48 @@ func BenchmarkMaps_CornelkHashmap_Fill10K(b *testing.B) {
 	}
 }
 
-func BenchmarkMaps_Intintmap_Fill10K(b *testing.B) {
+func BenchmarkMaps_Intintmap_Size1_Fill10K(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		table := intintmap.New(100000, 1)
+		table := intintmap.New(1, 0.6)
 		var k int64
 		for k = 0; k < 10000; k++ {
 			table.Put(k, 1)
+		}
+	}
+}
+
+func BenchmarkMaps_Intintmap_Size1_WithLock_Fill10K(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		table := intintmap.New(1, 0.6)
+		mutex := &sync.Mutex{}
+		var k int64
+		for k = 0; k < 10000; k++ {
+			mutex.Lock()
+			table.Put(k, 1)
+			mutex.Unlock()
+		}
+	}
+}
+
+func BenchmarkMaps_Intintmap_Size10K_Fill10K(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		table := intintmap.New(10000, 0.6)
+		var k int64
+		for k = 0; k < 10000; k++ {
+			table.Put(k, 1)
+		}
+	}
+}
+
+func BenchmarkMaps_Intintmap_Size10K_WithLock_Fill10K(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		table := intintmap.New(10000, 0.6)
+		mutex := &sync.Mutex{}
+		var k int64
+		for k = 0; k < 10000; k++ {
+			mutex.Lock()
+			table.Put(k, 1)
+			mutex.Unlock()
 		}
 	}
 }
