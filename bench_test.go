@@ -328,3 +328,37 @@ func BenchmarkMaps_LFMap_Fill10K(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkQueue_Chan(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		pipe := make(chan struct{}, 10000)
+		for k := 0; k < 10000; k++ {
+			pipe <- struct{}{}
+		}
+
+		results := []struct{}{}
+		for k := 0; k < 10000; k++ {
+			results = append(results, <-pipe)
+		}
+	}
+}
+
+func BenchmarkQueue_SliceLock(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		mutex := sync.Mutex{}
+		pipe := make([]struct{}, 0, 10000)
+		for k := 0; k < 10000; k++ {
+			mutex.Lock()
+			pipe = append(pipe, struct{}{})
+			mutex.Unlock()
+		}
+
+		results := []struct{}{}
+		for k := 0; k < 10000; k++ {
+			mutex.Lock()
+			results = append(results, pipe[0])
+			pipe = pipe[1:]
+			mutex.Unlock()
+		}
+	}
+}

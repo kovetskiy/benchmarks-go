@@ -1,32 +1,37 @@
 goos: linux
 goarch: amd64
-pkg: github.com/kovetskiy/bench
-Benchmark_MathAbs_Positive-4                    	2000000000	         0.32 ns/op
-Benchmark_MathAbs_Negative-4                    	2000000000	         0.32 ns/op
-Benchmark_Manual_Positive-4                     	2000000000	         0.32 ns/op
-Benchmark_Manual_Negative-4                     	2000000000	         0.32 ns/op
-Benchmark_Set-4                                 	2000000000	         0.32 ns/op
-Benchmark_If-4                                  	2000000000	         0.32 ns/op
-BenchmarkAllocateWithoutStopStartReset-4        	 2000000	       932 ns/op
-BenchmarkAllocateWithReset-4                    	 2000000	       944 ns/op
-BenchmarkAllocateStopStart-4                    	 1000000	      1407 ns/op
-BenchmarkSlice_Append-4                         	10000000	       173 ns/op
-BenchmarkSlice_MakeLength_Set-4                 	200000000	         6.16 ns/op
-BenchmarkSlice_MakeCapacity_Append-4            	200000000	         7.17 ns/op
-BenchmarkSliceDeclareVar-4                      	20000000	        81.8 ns/op
-BenchmarkSliceDeclareInitialize-4               	20000000	        81.7 ns/op
-BenchmarkSliceDeclareUnderlying-4               	30000000	        37.7 ns/op
-BenchmarkVar_InLoop-4                           	30000000	        46.8 ns/op
-BenchmarkVar_OutLoop-4                          	30000000	        39.7 ns/op
-BenchmarkVar_New-4                              	20000000	        72.0 ns/op
-BenchmarkMaps_StdMap_Typed_Fill10K-4            	    2000	    794803 ns/op
-BenchmarkMaps_StdMap_WithLock_Typed_Fill10K-4   	    2000	    883978 ns/op
-BenchmarkMaps_StdMap_Interface_Fill10K-4        	    1000	   1815373 ns/op
-BenchmarkMaps_SyncMap_Fill10K-4                 	     500	   3182999 ns/op
-BenchmarkMaps_CornelkHashmap_Fill10K-4          	      10	 196958463 ns/op
-BenchmarkMaps_Intintmap_Fill10K-4               	    5000	    387838 ns/op
-BenchmarkMaps_SuncatHashmap_Fill10K-4           	     500	   2779946 ns/op
-BenchmarkMaps_ChrisTomichHashmap_Fill10K-4      	    2000	    965213 ns/op
-BenchmarkMaps_LFMap_Fill10K-4                   	     300	   5242015 ns/op
+pkg: github.com/kovetskiy/benchmarks-go
+Benchmark_MathAbs_Positive-4                         	2000000000	         0.38 ns/op
+Benchmark_MathAbs_Negative-4                         	2000000000	         0.42 ns/op
+Benchmark_Manual_Positive-4                          	2000000000	         0.39 ns/op
+Benchmark_Manual_Negative-4                          	2000000000	         0.40 ns/op
+Benchmark_Set-4                                      	2000000000	         0.40 ns/op
+Benchmark_If-4                                       	2000000000	         0.44 ns/op
+BenchmarkAllocateWithoutStopStartReset-4             	 1000000	      1174 ns/op
+BenchmarkAllocateWithReset-4                         	 1000000	      1180 ns/op
+BenchmarkAllocateStopStart-4                         	 1000000	      1785 ns/op
+BenchmarkSlice_Append-4                              	10000000	       214 ns/op
+BenchmarkSlice_MakeLength_Set-4                      	200000000	         7.21 ns/op
+BenchmarkSlice_MakeCapacity_Append-4                 	200000000	         8.67 ns/op
+BenchmarkSliceDeclareVar-4                           	20000000	        99.9 ns/op
+BenchmarkSliceDeclareInitialize-4                    	20000000	        93.3 ns/op
+BenchmarkSliceDeclareUnderlying-4                    	30000000	        39.5 ns/op
+BenchmarkVar_InLoop-4                                	30000000	        55.6 ns/op
+BenchmarkVar_OutLoop-4                               	30000000	        50.3 ns/op
+BenchmarkVar_New-4                                   	20000000	        88.3 ns/op
+BenchmarkMaps_StdMap_Typed_Fill10K-4                 	    2000	    988694 ns/op
+BenchmarkMaps_StdMap_WithLock_Typed_Fill10K-4        	    2000	   1080003 ns/op
+BenchmarkMaps_StdMap_Interface_Fill10K-4             	    1000	   2643766 ns/op
+BenchmarkMaps_SyncMap_Fill10K-4                      	     300	   3993369 ns/op
+BenchmarkMaps_CornelkHashmap_Fill10K-4               	       5	 253398795 ns/op
+BenchmarkMaps_Intintmap_Size1_Fill10K-4              	    2000	   1226084 ns/op
+BenchmarkMaps_Intintmap_Size1_WithLock_Fill10K-4     	    1000	   1364831 ns/op
+BenchmarkMaps_Intintmap_Size10K_Fill10K-4            	   10000	    236948 ns/op
+BenchmarkMaps_Intintmap_Size10K_WithLock_Fill10K-4   	    5000	    455329 ns/op
+BenchmarkMaps_SuncatHashmap_Fill10K-4                	     500	   3414027 ns/op
+BenchmarkMaps_ChrisTomichHashmap_Fill10K-4           	    1000	   1630574 ns/op
+BenchmarkMaps_LFMap_Fill10K-4                        	     200	   6026067 ns/op
+BenchmarkQueue_Chan-4                                	    2000	    704940 ns/op
+BenchmarkQueue_SliceLock-4                           	    3000	    463826 ns/op
 PASS
-ok  	github.com/kovetskiy/bench	56.097s
+ok  	github.com/kovetskiy/benchmarks-go	71.184s
