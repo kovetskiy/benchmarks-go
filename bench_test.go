@@ -1,4 +1,4 @@
-package bench
+package main
 
 import (
 	"fmt"
@@ -331,10 +331,12 @@ func BenchmarkMaps_LFMap_Fill10K(b *testing.B) {
 
 func BenchmarkQueue_Chan(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		pipe := make(chan struct{}, 10000)
-		for k := 0; k < 10000; k++ {
-			pipe <- struct{}{}
-		}
+		pipe := make(chan struct{})
+		go func() {
+			for k := 0; k < 10000; k++ {
+				pipe <- struct{}{}
+			}
+		}()
 
 		results := []struct{}{}
 		for k := 0; k < 10000; k++ {
@@ -343,22 +345,79 @@ func BenchmarkQueue_Chan(b *testing.B) {
 	}
 }
 
-func BenchmarkQueue_SliceLock(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		mutex := sync.Mutex{}
-		pipe := make([]struct{}, 0, 10000)
-		for k := 0; k < 10000; k++ {
-			mutex.Lock()
-			pipe = append(pipe, struct{}{})
-			mutex.Unlock()
-		}
+type (
+	Side int8
+)
 
-		results := []struct{}{}
-		for k := 0; k < 10000; k++ {
-			mutex.Lock()
-			results = append(results, pipe[0])
-			pipe = pipe[1:]
-			mutex.Unlock()
+const SideFoo Side = 10
+const SideBar Side = 20
+
+func getConstant(i int) Side {
+	if i%2 == 0 {
+		return SideFoo
+	}
+
+	return SideBar
+}
+
+func BenchmarkCondition_Switch_TwoCases(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		foos := 0
+		bars := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			switch value {
+			case SideFoo:
+				foos++
+			case SideBar:
+				bars++
+			}
+		}
+	}
+}
+
+func BenchmarkCondition_Switch_CaseDefault(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		foos := 0
+		bars := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			switch value {
+			case SideFoo:
+				foos++
+			default:
+				bars++
+			}
+		}
+	}
+}
+
+func BenchmarkCondition_IfElse(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		foos := 0
+		bars := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			if value == SideFoo {
+				foos++
+			} else {
+				bars++
+			}
+		}
+	}
+}
+
+func BenchmarkCondition_IfElseIf(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		foos := 0
+		bars := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			if value == SideFoo {
+				foos++
+			} else if value == SideBar {
+				bars++
+			}
 		}
 	}
 }

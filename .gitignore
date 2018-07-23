@@ -1,1 +1,4 @@
 /bench.test
+/benchmarks-go
+/benchmarks-go.test
+/diskwrite.test
