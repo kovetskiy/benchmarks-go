@@ -421,3 +421,163 @@ func BenchmarkCondition_IfElseIf(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkSerializers_EncodeGotinyStruct(b *testing.B) {
+	s := createStruct()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeGotinyStruct(s)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeGobStruct(b *testing.B) {
+	s := createStruct()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeGobStruct(s)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeMsgpackStruct(b *testing.B) {
+	s := createStruct()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeMsgpackStruct(s)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeGotiny(b *testing.B) {
+	m := createMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeGotiny(&m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeMsgpack(b *testing.B) {
+	m := createMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeMsgpack(m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeGobMap(b *testing.B) {
+	m := createMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeGob(m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeJSONMap(b *testing.B) {
+	m := createMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeJSON(m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_DecodeGobMap(b *testing.B) {
+	m := createMap(1000)
+	byt := encodeGob(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var result map[int64]float64
+		decodeGob(byt, &result)
+	}
+}
+
+func BenchmarkSerializers_DecodeJSONMap(b *testing.B) {
+	m := createMap(1000)
+	byt := encodeJSON(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var result map[int64]float64
+		decodeJSON(byt, &result)
+	}
+}
+
+func BenchmarkSerializers_EncodeGobSliceMap(b *testing.B) {
+	m := createSliceMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeGob(m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_EncodeJSONSliceMap(b *testing.B) {
+	m := createSliceMap(1000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res := encodeJSON(m)
+		_ = res
+	}
+}
+
+func BenchmarkSerializers_DecodeGobSliceMap(b *testing.B) {
+	m := createSliceMap(1000)
+	byt := encodeGob(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var result []map[int64]float64
+		decodeGob(byt, &result)
+	}
+}
+
+func BenchmarkSerializers_DecodeJSONSliceMap(b *testing.B) {
+	m := createSliceMap(1000)
+	byt := encodeJSON(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var result []map[int64]float64
+		decodeJSON(byt, &result)
+	}
+}
+
+func BenchmarkSerializers_DecodeGobStruct(b *testing.B) {
+	m := AI(createStruct())
+	byt := encodeGobStruct(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		result := decodeGobStruct(byt)
+		_ = result
+		//if result.GetName() != "blah" {
+		//    panic(result)
+		//}
+	}
+}
+
+func BenchmarkSerializers_DecodeGotinyStruct(b *testing.B) {
+	m := AI(createStruct())
+	byt := encodeGotinyStruct(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		result := decodeGotinyStruct(byt)
+		_ = result
+		//if result.GetName() != "blah" {
+		//    panic(result)
+		//}
+	}
+}
+
+func BenchmarkSerializers_DecodeMsgpackStruct(b *testing.B) {
+	m := createStruct()
+	byt := encodeMsgpackStruct(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		result := decodeMsgpackStruct(byt)
+		_ = result
+		//if result.GetName() != "blah" {
+		//    panic(result)
+		//}
+	}
+}
