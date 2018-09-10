@@ -12,6 +12,7 @@ import (
 	cornelk "github.com/cornelk/hashmap"
 	lfmap "github.com/fastgeert/go-lfmap"
 	suncat "github.com/suncat2000/hashmap"
+	"github.com/vmihailenco/msgpack"
 )
 
 func Benchmark_MathAbs_Positive(b *testing.B) {
@@ -577,6 +578,27 @@ func BenchmarkSerializers_DecodeMsgpackStruct(b *testing.B) {
 		result := decodeMsgpackStruct(byt)
 		_ = result
 		//if result.GetName() != "blah" {
+		//    panic(result)
+		//}
+	}
+}
+
+func BenchmarkSerializers_EncodeMsgpackStructConcrete(b *testing.B) {
+	s := createStruct()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		msgpack.Marshal(s)
+	}
+}
+
+func BenchmarkSerializers_DecodeMsgpackStructConcrete(b *testing.B) {
+	m := createStruct()
+	byt, _ := msgpack.Marshal(m)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var result interface{}
+		msgpack.Unmarshal(byt, &result)
+		//if result.(*A).GetName() != "blah" {
 		//    panic(result)
 		//}
 	}
