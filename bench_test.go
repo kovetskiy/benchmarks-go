@@ -393,6 +393,66 @@ func BenchmarkCondition_Switch_CaseDefault(b *testing.B) {
 	}
 }
 
+func BenchmarkCondition_TypeSwitch_Native(b *testing.B) {
+	var result interface{}
+
+	for i := 0; i < b.N; i++ {
+		ints := 0
+		strings := 0
+		for j := 0; j < 100; j++ {
+			var value interface{}
+			if j%2 == 0 {
+				value = int(1)
+			} else {
+				value = string("1")
+			}
+
+			switch value := value.(type) {
+			case int:
+				result = value
+				ints++
+			case string:
+				result = value
+				strings++
+			}
+		}
+	}
+
+	_ = result
+}
+
+func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
+	var result interface{}
+
+	for i := 0; i < b.N; i++ {
+		ints := 0
+		strings := 0
+		for j := 0; j < 100; j++ {
+			var value interface{}
+			var kind string
+
+			if j%2 == 0 {
+				value = int(1)
+				kind = "int"
+			} else {
+				value = string("1")
+				kind = "value"
+			}
+
+			switch kind {
+			case "int":
+				result = value.(int)
+				ints++
+			case "string":
+				result = value.(string)
+				strings++
+			}
+		}
+	}
+
+	_ = result
+}
+
 func BenchmarkCondition_IfElse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		foos := 0
