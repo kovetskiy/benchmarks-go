@@ -408,6 +408,12 @@ func BenchmarkCondition_TypeSwitch_Native(b *testing.B) {
 			}
 
 			switch value := value.(type) {
+			case float64:
+			case float32:
+			case bool:
+			case complex64:
+			case []byte:
+
 			case int:
 				result = value
 				ints++
@@ -424,6 +430,8 @@ func BenchmarkCondition_TypeSwitch_Native(b *testing.B) {
 func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
 	var result interface{}
 
+	const kindInt = "int"
+	const kindString = "string"
 	for i := 0; i < b.N; i++ {
 		ints := 0
 		strings := 0
@@ -433,17 +441,23 @@ func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
 
 			if j%2 == 0 {
 				value = int(1)
-				kind = "int"
+				kind = kindInt
 			} else {
 				value = string("1")
-				kind = "value"
+				kind = kindString
 			}
 
 			switch kind {
-			case "int":
+			case "float64":
+			case "float32":
+			case "bool":
+			case "complex64":
+			case "[]byte":
+
+			case kindInt:
 				result = value.(int)
 				ints++
-			case "string":
+			case kindString:
 				result = value.(string)
 				strings++
 			}
