@@ -73,24 +73,18 @@ func encodeMsgpack(v interface{}) []byte {
 	return buf
 }
 
-func encodeGobStruct(a AI) []byte {
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
+func encodeGobStruct(enc *gob.Encoder, a AI) {
 	err := enc.Encode(&a)
 	if err != nil {
 		panic(err)
 	}
-
-	return buf.Bytes()
 }
 
-func encodeMsgpackStruct(a A) []byte {
-	buf, err := msgpack.Marshal(a)
+func encodeMsgpackStruct(enc *msgpack.Encoder, a A) {
+	err := enc.Encode(a)
 	if err != nil {
 		panic(err)
 	}
-
-	return buf
 }
 
 func encodeGotiny(v interface{}) []byte {

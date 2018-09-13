@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"math"
 	"strconv"
@@ -470,7 +472,7 @@ func BenchmarkCondition_TypeSwitch_If(b *testing.B) {
 	_ = result
 }
 
-func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
+func BenchmarkCondition_TypeSwitch_Assisted_String(b *testing.B) {
 	var result interface{}
 
 	const kindInt = "int"
@@ -496,6 +498,46 @@ func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
 			case "bool":
 			case "complex64":
 			case "[]byte":
+
+			case kindInt:
+				result = value.(int)
+				ints++
+			case kindString:
+				result = value.(string)
+				strings++
+			}
+		}
+	}
+
+	_ = result
+}
+
+func BenchmarkCondition_TypeSwitch_Assisted_Int8(b *testing.B) {
+	var result interface{}
+
+	const kindInt = 1
+	const kindString = 2
+	for i := 0; i < b.N; i++ {
+		ints := 0
+		strings := 0
+		for j := 0; j < 100; j++ {
+			var value interface{}
+			var kind int8
+
+			if j%2 == 0 {
+				value = int(1)
+				kind = kindInt
+			} else {
+				value = string("1")
+				kind = kindString
+			}
+
+			switch kind {
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
 
 			case kindInt:
 				result = value.(int)
@@ -551,19 +593,19 @@ func BenchmarkSerializers_EncodeGotinyStruct(b *testing.B) {
 
 func BenchmarkSerializers_EncodeGobStruct(b *testing.B) {
 	s := createStruct()
+	encoder := gob.NewEncoder(bytes.NewBuffer(nil))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		res := encodeGobStruct(s)
-		_ = res
+		encodeGobStruct(encoder, s)
 	}
 }
 
 func BenchmarkSerializers_EncodeMsgpackStruct(b *testing.B) {
 	s := createStruct()
+	encoder := msgpack.NewEncoder(bytes.NewBuffer(nil))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		res := encodeMsgpackStruct(s)
-		_ = res
+		encodeMsgpackStruct(encoder, s)
 	}
 }
 
@@ -663,10 +705,12 @@ func BenchmarkSerializers_DecodeJSONSliceMap(b *testing.B) {
 
 func BenchmarkSerializers_DecodeGobStruct(b *testing.B) {
 	m := AI(createStruct())
-	byt := encodeGobStruct(m)
+	buf := bytes.NewBuffer(nil)
+	encoder := gob.NewEncoder(buf)
+	encodeGobStruct(encoder, m)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		result := decodeGobStruct(byt)
+		result := decodeGobStruct(buf.Bytes())
 		_ = result
 		//if result.GetName() != "blah" {
 		//    panic(result)
@@ -689,10 +733,12 @@ func BenchmarkSerializers_DecodeGotinyStruct(b *testing.B) {
 
 func BenchmarkSerializers_DecodeMsgpackStruct(b *testing.B) {
 	m := createStruct()
-	byt := encodeMsgpackStruct(m)
+	buf := bytes.NewBuffer(nil)
+	encoder := msgpack.NewEncoder(buf)
+	encodeMsgpackStruct(encoder, m)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		result := decodeMsgpackStruct(byt)
+		result := decodeMsgpackStruct(buf.Bytes())
 		_ = result
 		//if result.GetName() != "blah" {
 		//    panic(result)
