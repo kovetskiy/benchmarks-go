@@ -427,6 +427,49 @@ func BenchmarkCondition_TypeSwitch_Native(b *testing.B) {
 	_ = result
 }
 
+func BenchmarkCondition_TypeSwitch_If(b *testing.B) {
+	var result interface{}
+
+	for i := 0; i < b.N; i++ {
+		ints := 0
+		strings := 0
+		for j := 0; j < 100; j++ {
+			var value interface{}
+			if j%2 == 0 {
+				value = int(1)
+			} else {
+				value = string("1")
+			}
+
+			if _, ok := value.(float64); ok {
+				//
+			}
+			if _, ok := value.(float32); ok {
+				//
+			}
+			if _, ok := value.(bool); ok {
+				//
+			}
+			if _, ok := value.(complex64); ok {
+				//
+			}
+			if _, ok := value.([]byte); ok {
+				//
+			}
+			if value, ok := value.(int); ok {
+				result = value
+				ints++
+			}
+			if value, ok := value.(string); ok {
+				result = value
+				strings++
+			}
+		}
+	}
+
+	_ = result
+}
+
 func BenchmarkCondition_TypeSwitch_Assisted(b *testing.B) {
 	var result interface{}
 
