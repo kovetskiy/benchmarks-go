@@ -552,6 +552,46 @@ func BenchmarkCondition_TypeSwitch_Assisted_Int8(b *testing.B) {
 	_ = result
 }
 
+func BenchmarkCondition_TypeSwitch_Assisted_Uint8(b *testing.B) {
+	var result interface{}
+
+	const kindInt uint8 = 1
+	const kindString uint8 = 2
+	for i := 0; i < b.N; i++ {
+		ints := 0
+		strings := 0
+		for j := 0; j < 100; j++ {
+			var value interface{}
+			var kind uint8
+
+			if j%2 == 0 {
+				value = int(1)
+				kind = kindInt
+			} else {
+				value = string("1")
+				kind = kindString
+			}
+
+			switch kind {
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+
+			case kindInt:
+				result = value.(int)
+				ints++
+			case kindString:
+				result = value.(string)
+				strings++
+			}
+		}
+	}
+
+	_ = result
+}
+
 func BenchmarkCondition_IfElse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		foos := 0
