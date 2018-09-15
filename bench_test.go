@@ -864,6 +864,8 @@ func doCpuJob(max int) {
 	_ = i
 }
 
+const BenchmarkWorker_CPUJob = 100000
+
 func BenchmarkWorker_Single_Chan(b *testing.B) {
 	threads := 5
 	for i := 0; i < b.N; i++ {
@@ -875,7 +877,7 @@ func BenchmarkWorker_Single_Chan(b *testing.B) {
 			for {
 				i++
 				<-ch
-				doCpuJob(10000)
+				doCpuJob(BenchmarkWorker_CPUJob)
 				if i == threads {
 					wg.Done()
 					return
@@ -903,7 +905,7 @@ func BenchmarkWorker_Multiple_Lock(b *testing.B) {
 			wg.Add(1)
 			go func() {
 				mutex.Lock()
-				doCpuJob(10000)
+				doCpuJob(BenchmarkWorker_CPUJob)
 				mutex.Unlock()
 				wg.Done()
 			}()
