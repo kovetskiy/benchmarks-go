@@ -863,3 +863,52 @@ func doCpuJob(max int) {
 	}
 	_ = i
 }
+
+func BenchmarkWorker_Single_Chan(b *testing.B) {
+	threads := 5
+	for i := 0; i < b.N; i++ {
+		ch := make(chan struct{})
+		wg := &sync.WaitGroup{}
+		wg.Add(1)
+		go func() {
+			i := 0
+			for {
+				i++
+				<-ch
+				doCpuJob(10000)
+				if i == threads {
+					wg.Done()
+					return
+				}
+			}
+		}()
+
+		for i := 0; i < threads; i++ {
+			go func() {
+				ch <- struct{}{}
+			}()
+		}
+
+		wg.Wait()
+	}
+}
+
+func BenchmarkWorker_Multiple_Lock(b *testing.B) {
+	threads := 5
+	for i := 0; i < b.N; i++ {
+		wg := &sync.WaitGroup{}
+
+		mutex := &sync.Mutex{}
+		for i := 0; i < threads; i++ {
+			wg.Add(1)
+			go func() {
+				mutex.Lock()
+				doCpuJob(10000)
+				mutex.Unlock()
+				wg.Done()
+			}()
+		}
+
+		wg.Wait()
+	}
+}
