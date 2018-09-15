@@ -363,6 +363,33 @@ func getConstant(i int) Side {
 	return SideBar
 }
 
+func BenchmarkCondition_Switch_TwoCasesDefault(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		results := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			switch value {
+			case SideFoo:
+			case SideBar:
+			default:
+				results++
+			}
+		}
+	}
+}
+
+func BenchmarkCondition_Switch_TwoCases_If(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		results := 0
+		for j := 0; j < 100; j++ {
+			value := getConstant(j)
+			if value != SideFoo && value != SideBar {
+				results++
+			}
+		}
+	}
+}
+
 func BenchmarkCondition_Switch_TwoCases(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		foos := 0
@@ -805,4 +832,34 @@ func BenchmarkSerializers_DecodeMsgpackStructConcrete(b *testing.B) {
 		//    panic(result)
 		//}
 	}
+}
+
+func BenchmarkChan_Struct_Close(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ch := make(chan struct{})
+		go func() {
+			//doCpuJob(100000)
+			close(ch)
+		}()
+		<-ch
+	}
+}
+
+func BenchmarkChan_Struct_Send(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ch := make(chan struct{})
+		go func() {
+			//doCpuJob(100000)
+			ch <- struct{}{}
+		}()
+		<-ch
+	}
+}
+
+func doCpuJob(max int) {
+	i := 0
+	for i := 0; i < max; i++ {
+		i++
+	}
+	_ = i
 }
