@@ -318,6 +318,7 @@ func BenchmarkMaps_ChrisTomichHashmap_Fill10K(b *testing.B) {
 		}
 	}
 }
+
 func BenchmarkMaps_LFMap_Fill10K(b *testing.B) {
 	keys := []string{}
 	for k := 0; k < 10000; k++ {
@@ -352,8 +353,10 @@ type (
 	Side int8
 )
 
-const SideFoo Side = 10
-const SideBar Side = 20
+const (
+	SideFoo Side = 10
+	SideBar Side = 20
+)
 
 func getConstant(i int) Side {
 	if i%2 == 0 {
@@ -779,7 +782,7 @@ func BenchmarkSerializers_DecodeGobStruct(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		result := decodeGobStruct(buf.Bytes())
 		_ = result
-		//if result.GetName() != "blah" {
+		// if result.GetName() != "blah" {
 		//    panic(result)
 		//}
 	}
@@ -792,7 +795,7 @@ func BenchmarkSerializers_DecodeGotinyStruct(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		result := decodeGotinyStruct(byt)
 		_ = result
-		//if result.GetName() != "blah" {
+		// if result.GetName() != "blah" {
 		//    panic(result)
 		//}
 	}
@@ -807,7 +810,7 @@ func BenchmarkSerializers_DecodeMsgpackStruct(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		result := decodeMsgpackStruct(buf.Bytes())
 		_ = result
-		//if result.GetName() != "blah" {
+		// if result.GetName() != "blah" {
 		//    panic(result)
 		//}
 	}
@@ -828,7 +831,7 @@ func BenchmarkSerializers_DecodeMsgpackStructConcrete(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var result interface{}
 		msgpack.Unmarshal(byt, &result)
-		//if result.(*A).GetName() != "blah" {
+		// if result.(*A).GetName() != "blah" {
 		//    panic(result)
 		//}
 	}
@@ -838,7 +841,7 @@ func BenchmarkChan_Struct_Close(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ch := make(chan struct{})
 		go func() {
-			//doCpuJob(100000)
+			// doCpuJob(100000)
 			close(ch)
 		}()
 		<-ch
@@ -849,7 +852,7 @@ func BenchmarkChan_Struct_Send(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ch := make(chan struct{})
 		go func() {
-			//doCpuJob(100000)
+			// doCpuJob(100000)
 			ch <- struct{}{}
 		}()
 		<-ch
@@ -912,5 +915,68 @@ func BenchmarkWorker_Multiple_Lock(b *testing.B) {
 		}
 
 		wg.Wait()
+	}
+}
+
+func inlineFactorial(n, prd int) int {
+	if n == 0 {
+		return prd
+	}
+	return inlineFactorial(n-1, prd*n)
+}
+
+func BenchmarkFactorial_For(b *testing.B) {
+	f := func(n int) int {
+		res := 1
+
+		for i := 1; i <= 10000; i++ {
+			res *= i
+		}
+
+		return res
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f(10000)
+		//_ = v
+	}
+}
+
+func BenchmarkFactorial_Func(b *testing.B) {
+	var f func(n int) int
+	f = func(n int) int {
+		if n == 0 {
+			return 1
+		} else {
+			return f(n-1) * n
+		}
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v := f(10000)
+		_ = v
+	}
+}
+
+func BenchmarkFactorial_Func_Optimized(b *testing.B) {
+	var rec func(n int, p int) int
+	rec = func(n int, p int) int {
+		if n == 0 {
+			return p
+		}
+		return rec(n-1, p*n)
+	}
+
+	var f func(n int) int
+	f = func(n int) int {
+		return rec(n, 1)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v := f(10000)
+		_ = v
 	}
 }
